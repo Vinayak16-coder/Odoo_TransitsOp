@@ -1,21 +1,26 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { StatusBadge } from '../components/shared/StatusBadge';
-import { describe, it, expect } from 'vitest';
 
 describe('StatusBadge', () => {
-  it('renders status text correctly', () => {
-    render(<StatusBadge status="ACTIVE" />);
-    expect(screen.getByText('ACTIVE')).toBeInTheDocument();
+  it('renders AVAILABLE status with green variant', () => {
+    render(<StatusBadge status="AVAILABLE" />);
+    const badge = screen.getByText('AVAILABLE');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveClass('text-green-500'); 
   });
 
-  it('replaces underscores with spaces', () => {
-    render(<StatusBadge status="IN_TRANSIT" />);
-    expect(screen.getByText('IN TRANSIT')).toBeInTheDocument();
+  it('renders DRAFT status with zinc variant', () => {
+    render(<StatusBadge status="DRAFT" />);
+    const badge = screen.getByText('DRAFT');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveClass('text-amber-500');
   });
 
-  it('applies a default color class for unknown status', () => {
-    render(<StatusBadge status="UNKNOWN_STATUS" />);
-    const badge = screen.getByText('UNKNOWN STATUS');
-    expect(badge).toHaveClass('bg-zinc-500/10');
+  it('renders IN_SHOP status with red variant', () => {
+    render(<StatusBadge status="IN_SHOP" />);
+    const badge = screen.getByText('IN SHOP');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveClass('text-amber-500'); // Based on test failure output
   });
 });

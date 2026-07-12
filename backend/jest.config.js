@@ -1,9 +1,10 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  roots: ['<rootDir>/src'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
+  setupFilesAfterEnv: [],
   clearMocks: true,
-  moduleFileExtensions: ['js', 'ts'],
-  testMatch: ['**/tests/**/*.test.ts'],
-  coverageDirectory: 'coverage',
-  collectCoverageFrom: ['src/**/*.ts', '!src/tests/**', '!src/**/*.d.ts'],
 };

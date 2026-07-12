@@ -1,115 +1,94 @@
-'use client';
+import React, { useEffect, useState } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { ShieldCheck, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import api from '@/lib/api';
+import { toast } from 'sonner';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Eye, ShieldAlert } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { apiFetch } from '@/lib/api';
+type PermissionLevel = 'none' | 'read' | 'write' | 'full';
 
-type PermissionLevel = 'full' | 'view' | 'none';
-
-type RolePermissions = {
-  [module: string]: PermissionLevel;
-};
-
-type PermissionsMatrix = {
-  [role: string]: RolePermissions;
-};
+interface PermissionsMatrix {
+  [role: string]: {
+    [resource: string]: PermissionLevel;
+  };
+}
 
 export function PermissionsGrid() {
   const [matrix, setMatrix] = useState<PermissionsMatrix | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadMatrix = async () => {
+    const fetchMatrix = async () => {
       try {
-        const res = await apiFetch('/users/permissions-matrix');
-        if (res.success) {
-          setMatrix(res.data);
-        }
+        const res = await api.get('/users/permissions-matrix');
+        setMatrix(res.data.matrix);
       } catch (err) {
-        console.error(err);
+        toast.error('Failed to load permissions matrix');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
-    loadMatrix();
+    fetchMatrix();
   }, []);
 
-  if (loading) {
-    return <div className="text-zinc-500 animate-pulse">Loading permissions matrix...</div>;
-  }
-
-  if (!matrix) {
-    return <div className="text-red-500">Failed to load permissions.</div>;
-  }
-
-  const roles = Object.keys(matrix);
-  const modules = Object.keys(matrix[roles[0]] || {});
-
-  const renderBadge = (level: PermissionLevel) => {
+  const getPermissionBadge = (level: PermissionLevel) => {
     switch (level) {
       case 'full':
-        return (
-          <Badge variant="outline" className="border-green-900 bg-green-950/30 text-green-400 gap-1">
-            <CheckCircle2 className="h-3 w-3" /> Full
-          </Badge>
-        );
-      case 'view':
-        return (
-          <Badge variant="outline" className="border-blue-900 bg-blue-950/30 text-blue-400 gap-1">
-            <Eye className="h-3 w-3" /> View Only
-          </Badge>
-        );
-      case 'none':
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-md"><CheckCircle2 className="w-3 h-3"/> Full</span>;
+      case 'write':
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-500 bg-amber-500/10 px-2 py-1 rounded-md"><CheckCircle2 className="w-3 h-3"/> Write</span>;
+      case 'read':
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-500 bg-blue-500/10 px-2 py-1 rounded-md"><CheckCircle2 className="w-3 h-3"/> Read</span>;
       default:
-        return (
-          <Badge variant="outline" className="border-zinc-800 bg-zinc-900/50 text-zinc-500 gap-1">
-            <ShieldAlert className="h-3 w-3" /> None
-          </Badge>
-        );
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500 bg-zinc-800/50 px-2 py-1 rounded-md"><XCircle className="w-3 h-3"/> None</span>;
     }
   };
 
-  const formatRole = (role: string) => {
-    return role.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
-  };
-
-  const formatModule = (mod: string) => {
-    return mod.replace(/([A-Z])/g, ' $1').trim();
-  };
-
   return (
-    <Card className="bg-zinc-950 border-zinc-800 overflow-hidden">
-      <CardHeader className="border-b border-zinc-800 bg-zinc-900/20">
-        <CardTitle>RBAC Matrix</CardTitle>
-        <CardDescription>Live enforcement rules mapped dynamically from the backend.</CardDescription>
+    <Card className="border-zinc-800 bg-zinc-950/50 backdrop-blur-xl h-full flex flex-col">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <ShieldCheck className="h-5 w-5 text-emerald-400" />
+          Role-Based Access Control
+        </CardTitle>
+        <CardDescription>
+          Live matrix of enforcement rules directly from the backend. (Read-only)
+        </CardDescription>
       </CardHeader>
-      <CardContent className="p-0 overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-zinc-900 border-b border-zinc-800 text-zinc-400 uppercase tracking-wider text-xs">
-            <tr>
-              <th className="px-6 py-4 font-medium">Role</th>
-              {modules.map(mod => (
-                <th key={mod} className="px-6 py-4 font-medium">{formatModule(mod)}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-zinc-800 text-zinc-300">
-            {roles.map(role => (
-              <tr key={role} className="hover:bg-zinc-900/50 transition-colors">
-                <td className="px-6 py-4 font-semibold text-zinc-200 whitespace-nowrap">
-                  {formatRole(role)}
-                </td>
-                {modules.map(mod => (
-                  <td key={`${role}-${mod}`} className="px-6 py-4 whitespace-nowrap">
-                    {renderBadge(matrix[role][mod])}
-                  </td>
+      <CardContent className="flex-1 overflow-x-auto">
+        {isLoading ? (
+          <div className="flex h-40 items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
+          </div>
+        ) : matrix ? (
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs uppercase bg-zinc-900/50 text-zinc-400">
+              <tr>
+                <th className="px-4 py-3 font-medium rounded-tl-lg">Resource</th>
+                {Object.keys(matrix).map(role => (
+                  <th key={role} className="px-4 py-3 font-medium text-center">
+                    {role.replace('_', ' ')}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-zinc-800/50">
+              {Object.keys(Object.values(matrix)[0] || {}).map(resource => (
+                <tr key={resource} className="hover:bg-zinc-900/20 transition-colors">
+                  <td className="px-4 py-4 font-medium text-zinc-200">{resource}</td>
+                  {Object.keys(matrix).map(role => (
+                    <td key={`${role}-${resource}`} className="px-4 py-4 text-center">
+                      {getPermissionBadge(matrix[role][resource])}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="flex h-40 items-center justify-center text-zinc-500">
+            No matrix data available.
+          </div>
+        )}
       </CardContent>
     </Card>
   );

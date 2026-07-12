@@ -1,83 +1,65 @@
-'use client';
-
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Save } from 'lucide-react';
-import { useState } from 'react';
+import { Building2, Save } from 'lucide-react';
+import { toast } from 'sonner';
 
 export function GeneralSettings() {
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  const handleSave = () => {
-    setSaving(true);
-    setTimeout(() => {
-      setSaving(false);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    }, 800);
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success('Settings saved successfully');
   };
 
   return (
-    <Card className="bg-zinc-950 border-zinc-800">
+    <Card className="border-zinc-800 bg-zinc-950/50 backdrop-blur-xl">
       <CardHeader>
-        <CardTitle>General Config</CardTitle>
-        <CardDescription>Global localization and identity defaults</CardDescription>
+        <CardTitle className="flex items-center gap-2">
+          <Building2 className="h-5 w-5 text-indigo-400" />
+          General Info
+        </CardTitle>
+        <CardDescription>Configure your depot's primary settings.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        
-        <div className="space-y-2">
-          <Label className="text-zinc-300">Depot Name</Label>
-          <Input defaultValue="TransitOps Central Hub" className="bg-zinc-900 border-zinc-800" />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSave}>
+        <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-zinc-300">Currency</Label>
+            <Label htmlFor="depotName">Depot Name</Label>
+            <Input id="depotName" defaultValue="Central Hub (Alpha)" className="bg-zinc-900 border-zinc-800" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="currency">Currency</Label>
             <Select defaultValue="USD">
-              <SelectTrigger className="bg-zinc-900 border-zinc-800">
-                <SelectValue />
+              <SelectTrigger id="currency" className="bg-zinc-900 border-zinc-800">
+                <SelectValue placeholder="Select Currency" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-950 border-zinc-800">
+              <SelectContent>
                 <SelectItem value="USD">USD ($)</SelectItem>
                 <SelectItem value="EUR">EUR (€)</SelectItem>
                 <SelectItem value="GBP">GBP (£)</SelectItem>
               </SelectContent>
             </Select>
           </div>
-
           <div className="space-y-2">
-            <Label className="text-zinc-300">Distance Unit</Label>
+            <Label htmlFor="distanceUnit">Distance Unit</Label>
             <Select defaultValue="KM">
-              <SelectTrigger className="bg-zinc-900 border-zinc-800">
-                <SelectValue />
+              <SelectTrigger id="distanceUnit" className="bg-zinc-900 border-zinc-800">
+                <SelectValue placeholder="Select Unit" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-950 border-zinc-800">
+              <SelectContent>
                 <SelectItem value="KM">Kilometers (km)</SelectItem>
                 <SelectItem value="MI">Miles (mi)</SelectItem>
               </SelectContent>
             </Select>
           </div>
-        </div>
-
-        <div className="pt-4 border-t border-zinc-800">
-          <Button 
-            onClick={handleSave} 
-            disabled={saving}
-            className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 text-zinc-950 font-medium"
-          >
-            {saving ? 'Saving...' : saved ? 'Saved Successfully' : (
-              <>
-                <Save className="h-4 w-4 mr-2" /> Save Config
-              </>
-            )}
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700">
+            <Save className="w-4 h-4 mr-2" /> Save Settings
           </Button>
-        </div>
-
-      </CardContent>
+        </CardFooter>
+      </form>
     </Card>
   );
 }

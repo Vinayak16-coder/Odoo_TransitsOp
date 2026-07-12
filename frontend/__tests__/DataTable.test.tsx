@@ -1,41 +1,23 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { DataTable } from '../components/shared/DataTable';
-import { describe, it, expect } from 'vitest';
-import { ColumnDef } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 
-type TestData = {
-  id: string;
-  name: string;
-};
-
-const columns: ColumnDef<TestData, any>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
-  {
-    accessorKey: 'name',
-    header: 'Name',
-  },
+const columnHelper = createColumnHelper<any>();
+const columns = [
+  columnHelper.accessor('name', { header: 'Name', cell: info => info.getValue() })
 ];
+const data = [{ name: 'Test Row 1' }];
 
 describe('DataTable', () => {
-  it('renders correctly with data', () => {
-    const data: TestData[] = [
-      { id: '1', name: 'Alice' },
-      { id: '2', name: 'Bob' },
-    ];
-    render(<DataTable columns={columns} data={data} />);
-    
-    expect(screen.getByText('ID')).toBeInTheDocument();
+  it('renders columns and data correctly', () => {
+    render(<DataTable columns={columns} data={data} searchKey="name" />);
+    expect(screen.getByText('Test Row 1')).toBeInTheDocument();
     expect(screen.getByText('Name')).toBeInTheDocument();
-    expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByText('Bob')).toBeInTheDocument();
   });
 
-  it('renders empty state when no data is provided', () => {
-    render(<DataTable columns={columns} data={[]} />);
-    
+  it('renders empty state when no data provided', () => {
+    render(<DataTable columns={columns} data={[]} searchKey="name" />);
     expect(screen.getByText('No results.')).toBeInTheDocument();
   });
 });
