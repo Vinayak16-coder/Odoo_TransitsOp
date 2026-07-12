@@ -65,7 +65,7 @@ export default function DriversPage() {
     if (!statusDialogState.driver || !statusDialogState.newStatus) return;
     try {
       await apiFetch(`/drivers/${statusDialogState.driver.id}/status`, {
-        method: 'PUT',
+        method: 'PATCH',
         body: JSON.stringify({ status: statusDialogState.newStatus, reason: 'Manual override via Drivers UI' })
       });
       await loadDrivers();
@@ -167,7 +167,7 @@ export default function DriversPage() {
             <DialogDescription>Update the duty status for {statusDialogState.driver?.name}.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 pt-4">
-            <Select value={statusDialogState.newStatus} onValueChange={(val) => setStatusDialogState({ ...statusDialogState, newStatus: val })}>
+            <Select value={statusDialogState.newStatus} onValueChange={(val) => setStatusDialogState({ ...statusDialogState, newStatus: val as string })}>
               <SelectTrigger className="bg-zinc-950 border-zinc-800">
                 <SelectValue />
               </SelectTrigger>
