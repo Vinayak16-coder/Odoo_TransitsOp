@@ -1,0 +1,114 @@
+### 1. Login as Fleet Manager
+# @name login
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "fleet@transitops.com",
+  "password": "password123"
+}
+
+### Store token
+@token = {{login.response.body.data.accessToken}}
+
+### 2. Create a Vehicle
+# @name createVehicle
+POST http://localhost:4000/api/vehicles
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "regNo": "OPS-V-001",
+  "nameModel": "Ops Van",
+  "type": "VAN",
+  "capacityKg": 1000,
+  "acquisitionCost": 20000
+}
+
+### 3. Create a Driver
+# @name createDriver
+POST http://localhost:4000/api/drivers
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Ops Driver",
+  "licenseNo": "OPS-DL-001",
+  "licenseCategory": "LMV",
+  "licenseExpiry": "2030-01-01T00:00:00Z",
+  "contact": "123"
+}
+
+### 4. Create Trip (Over Capacity)
+# @name createTripOver
+POST http://localhost:4000/api/trips
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "source": "A",
+  "destination": "B",
+  "cargoWeightKg": 1500,
+  "plannedDistanceKm": 100
+}
+
+### 5. Assign Over Capacity (Should fail with BR-1)
+PATCH http://localhost:4000/api/trips/{{createTripOver.response.body.data.id}}/assign
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "vehicleId": "{{createVehicle.response.body.data.id}}",
+  "driverId": "{{createDriver.response.body.data.id}}"
+}
+
+### 6. Create Trip (Valid)
+# @name createTripValid
+POST http://localhost:4000/api/trips
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "source": "A",
+  "destination": "B",
+  "cargoWeightKg": 800,
+  "plannedDistanceKm": 100
+}
+
+### 7. Assign Valid
+PATCH http://localhost:4000/api/trips/{{createTripValid.response.body.data.id}}/assign
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "vehicleId": "{{createVehicle.response.body.data.id}}",
+  "driverId": "{{createDriver.response.body.data.id}}"
+}
+
+### 8. Dispatch Valid
+PATCH http://localhost:4000/api/trips/{{createTripValid.response.body.data.id}}/dispatch
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 9. Maintenance on ON_TRIP Vehicle (Should fail with BR-5)
+POST http://localhost:4000/api/maintenance
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "vehicleId": "{{createVehicle.response.body.data.id}}",
+  "serviceType": "Repair",
+  "cost": 500,
+  "serviceDate": "2023-01-01T00:00:00Z"
+}
+
+### 10. Complete Trip
+PATCH http://localhost:4000/api/trips/{{createTripValid.response.body.data.id}}/complete
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "finalOdometerKm": 100,
+  "fuelConsumedLiters": 10,
+  "fuelCost": 50
+}

@@ -6,6 +6,12 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './modules/auth/auth.routes';
 import vehicleRoutes from './modules/vehicles/vehicle.routes';
 import driverRoutes from './modules/drivers/driver.routes';
+import tripRoutes from './modules/trips/trip.routes';
+import maintenanceRoutes from './modules/maintenance/maintenance.routes';
+import fuelRoutes from './modules/fuel/fuel.routes';
+import expenseRoutes from './modules/expenses/expense.routes';
+import analyticsRoutes from './modules/analytics/analytics.routes';
+import userRoutes from './modules/users/user.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -25,6 +31,12 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/drivers', driverRoutes);
+app.use('/api/trips', tripRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/fuel', fuelRoutes);
+app.use('/api/expenses', expenseRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(errorHandler);
 

@@ -1,0 +1,36 @@
+### 1. Login as Fleet Manager
+# @name login
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "fleet@transitops.com",
+  "password": "password123"
+}
+
+### Store token
+@token = {{login.response.body.data.accessToken}}
+
+### 2. Get Dashboard
+GET http://localhost:4000/api/analytics/dashboard
+Authorization: Bearer {{token}}
+
+### 3. Get KPIs
+GET http://localhost:4000/api/analytics/kpis
+Authorization: Bearer {{token}}
+
+### 4. Get Monthly Revenue
+GET http://localhost:4000/api/analytics/monthly-revenue
+Authorization: Bearer {{token}}
+
+### 5. Get Top Costliest Vehicles
+GET http://localhost:4000/api/analytics/top-costliest-vehicles
+Authorization: Bearer {{token}}
+
+### 6. Export Vehicles CSV
+GET http://localhost:4000/api/analytics/export/vehicles
+Authorization: Bearer {{token}}
+
+### 7. Get Permissions Matrix
+GET http://localhost:4000/api/users/permissions-matrix
+Authorization: Bearer {{token}}
