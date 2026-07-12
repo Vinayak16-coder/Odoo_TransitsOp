@@ -221,7 +221,8 @@ async function main() {
       if (role === Role.FLEET_MANAGER) {
         access = 'FULL';
       } else if (role === Role.DRIVER) {
-        if (['Dashboard', 'Fleet', 'Drivers', 'Trips'].includes(mod)) access = 'VIEW';
+        if (['Dashboard', 'Fleet'].includes(mod)) access = 'VIEW';
+        if (['Drivers', 'Trips'].includes(mod)) access = 'FULL';
       } else if (role === Role.SAFETY_OFFICER) {
         if (['Dashboard', 'Drivers', 'Maintenance', 'Analytics'].includes(mod)) access = 'VIEW';
       } else if (role === Role.FINANCIAL_ANALYST) {
@@ -232,7 +233,7 @@ async function main() {
         where: {
           role_module: { role, module: mod }
         },
-        update: {},
+        update: { access: access as any },
         create: { role, module: mod, access: access as any }
       });
     }
