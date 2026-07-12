@@ -1,0 +1,248 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------
+// ENUMS
+// ---------------------------------------------------------
+
+enum Role {
+  FLEET_MANAGER
+  DRIVER
+  SAFETY_OFFICER
+  FINANCIAL_ANALYST
+}
+
+enum VehicleType {
+  VAN
+  TRUCK
+  MINI
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  ON_TRIP
+  IN_SHOP
+  RETIRED
+}
+
+enum DriverStatus {
+  AVAILABLE
+  ON_TRIP
+  OFF_DUTY
+  SUSPENDED
+}
+
+enum LicenseCategory {
+  LMV
+  HMV
+}
+
+enum TripStatus {
+  DRAFT
+  DISPATCHED
+  COMPLETED
+  CANCELLED
+}
+
+enum MaintenanceStatus {
+  IN_SHOP
+  COMPLETED
+}
+
+enum ExpenseCategory {
+  TOLL
+  MISC
+  FUEL
+}
+
+// ---------------------------------------------------------
+// USER + AUTH
+// ---------------------------------------------------------
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  passwordHash  String
+  role          Role
+  failedLogins  Int      @default(0)
+  lockedUntil   DateTime?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  driverProfile Driver?
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+// ---------------------------------------------------------
+// FLEET
+// ---------------------------------------------------------
+
+model Vehicle {
+  id             String        @id @default(cuid())
+  regNo          String        @unique
+  nameModel      String
+  type           VehicleType
+  capacityKg     Int
+  odometerKm     Int           @default(0)
+  acquisitionCost Decimal      @db.Decimal(12, 2)
+  avgCostPerKm   Decimal       @default(0) @db.Decimal(10, 2)
+  status         VehicleStatus @default(AVAILABLE)
+  region         String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  trips           Trip[]
+  maintenanceLogs MaintenanceLog[]
+  fuelLogs        FuelLog[]
+  expenses        Expense[]
+
+  @@map("vehicles")
+}
+
+model Driver {
+  id              String          @id @default(cuid())
+  userId          String?         @unique
+  user            User?           @relation(fields: [userId], references: [id])
+  name            String
+  licenseNo       String          @unique
+  licenseCategory LicenseCategory
+  licenseExpiry   DateTime
+  contact         String
+  tripCompletionPct Decimal       @default(0) @db.Decimal(5, 2)
+  safetyScorePct  Decimal         @default(100) @db.Decimal(5, 2)
+  status          DriverStatus    @default(AVAILABLE)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  trips Trip[]
+
+  @@map("drivers")
+}
+
+// ---------------------------------------------------------
+// TRIPS
+// ---------------------------------------------------------
+
+model Trip {
+  id              String     @id @default(cuid())
+  tripCode        String     @unique
+  source          String
+  destination     String
+  vehicleId       String?
+  vehicle         Vehicle?   @relation(fields: [vehicleId], references: [id])
+  driverId        String?
+  driver          Driver?    @relation(fields: [driverId], references: [id])
+  cargoWeightKg   Int
+  plannedDistanceKm Decimal  @db.Decimal(8, 2)
+  revenue         Decimal?   @db.Decimal(12, 2)
+  finalOdometerKm Int?
+  fuelConsumedLiters Decimal? @db.Decimal(8, 2)
+  status          TripStatus @default(DRAFT)
+  etaMinutes      Int?
+  dispatchedAt    DateTime?
+  completedAt     DateTime?
+  cancelledAt     DateTime?
+  cancelReason    String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  fuelLogs  FuelLog[]
+  expenses  Expense[]
+
+  @@map("trips")
+}
+
+// ---------------------------------------------------------
+// MAINTENANCE
+// ---------------------------------------------------------
+
+model MaintenanceLog {
+  id          String             @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle            @relation(fields: [vehicleId], references: [id])
+  serviceType String
+  cost        Decimal            @db.Decimal(10, 2)
+  serviceDate DateTime
+  status      MaintenanceStatus  @default(IN_SHOP)
+  notes       String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@map("maintenance_logs")
+}
+
+// ---------------------------------------------------------
+// FUEL + EXPENSES
+// ---------------------------------------------------------
+
+model FuelLog {
+  id        String   @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  tripId    String?
+  trip      Trip?    @relation(fields: [tripId], references: [id])
+  date      DateTime
+  liters    Decimal  @db.Decimal(8, 2)
+  cost      Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+
+  @@map("fuel_logs")
+}
+
+model Expense {
+  id        String          @id @default(cuid())
+  tripId    String?
+  trip      Trip?           @relation(fields: [tripId], references: [id])
+  vehicleId String?
+  vehicle   Vehicle?        @relation(fields: [vehicleId], references: [id])
+  category  ExpenseCategory
+  toll      Decimal         @default(0) @db.Decimal(10, 2)
+  other     Decimal         @default(0) @db.Decimal(10, 2)
+  total     Decimal         @db.Decimal(10, 2)
+  status    String          @default("Available")
+  createdAt DateTime        @default(now())
+
+  @@map("expenses")
+}
+
+// ---------------------------------------------------------
+// AUDIT
+// ---------------------------------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  entityType String
+  entityId   String
+  action     String
+  fromValue  String?
+  toValue    String?
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  @@map("audit_logs")
+}

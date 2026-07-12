@@ -1,0 +1,69 @@
+### 1. Login as Fleet Manager to get token
+# @name login
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "fleet@transitops.com",
+  "password": "password123"
+}
+
+### Store token
+@token = {{login.response.body.data.accessToken}}
+
+### 2. Create a Vehicle (Valid)
+POST http://localhost:4000/api/vehicles
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "regNo": "TEST-V-001",
+  "nameModel": "Test Van",
+  "type": "VAN",
+  "capacityKg": 1000,
+  "acquisitionCost": 20000,
+  "region": "North"
+}
+
+### 3. Duplicate regNo rejection (BR-4)
+POST http://localhost:4000/api/vehicles
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "regNo": "TEST-V-001",
+  "nameModel": "Duplicate Van",
+  "type": "VAN",
+  "capacityKg": 1500,
+  "acquisitionCost": 25000
+}
+
+### 4. Create an Available Driver (Valid)
+POST http://localhost:4000/api/drivers
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Valid Driver",
+  "licenseNo": "TEST-DL-001",
+  "licenseCategory": "LMV",
+  "licenseExpiry": "2030-01-01T00:00:00Z",
+  "contact": "111-222"
+}
+
+### 5. Create a Driver with Expired License
+POST http://localhost:4000/api/drivers
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Expired Driver",
+  "licenseNo": "TEST-DL-002",
+  "licenseCategory": "HMV",
+  "licenseExpiry": "2020-01-01T00:00:00Z",
+  "contact": "333-444"
+}
+
+### 6. Get Available Drivers (Should exclude Expired Driver)
+GET http://localhost:4000/api/drivers?status=AVAILABLE
+Authorization: Bearer {{token}}
