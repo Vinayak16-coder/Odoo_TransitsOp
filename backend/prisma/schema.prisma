@@ -246,3 +246,25 @@ model AuditLog {
 
   @@map("audit_logs")
 }
+
+// ---------------------------------------------------------
+// PERMISSIONS
+// ---------------------------------------------------------
+
+enum AccessLevel {
+  NONE
+  VIEW
+  FULL
+}
+
+model RolePermission {
+  id        String      @id @default(cuid())
+  role      Role
+  module    String
+  access    AccessLevel
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([role, module])
+  @@map("role_permissions")
+}

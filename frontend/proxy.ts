@@ -22,6 +22,14 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
+  // Basic route protection based on role cookie (if we store it)
+  // For strictly secure checks, we rely on the client-side RoleGate and backend API
+  // but we can block /settings entirely if we know role isn't FLEET_MANAGER
+  const role = request.cookies.get('role')?.value;
+  if (pathname.startsWith('/settings') && role !== 'FLEET_MANAGER') {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
   return NextResponse.next();
 }
 

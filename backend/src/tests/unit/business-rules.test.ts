@@ -37,7 +37,10 @@ describe('Business Rules Unit Tests', () => {
       
       await expect(TripService.assignTrip('t1', 'v1', 'd1'))
         .rejects
-        .toEqual(expect.objectContaining({ status: 422 }));
+        .toEqual(expect.objectContaining({ 
+          status: 422, 
+          details: { capacityKg: 1000, cargoWeightKg: 1200, exceededByKg: 200 } 
+        }));
     });
   });
 

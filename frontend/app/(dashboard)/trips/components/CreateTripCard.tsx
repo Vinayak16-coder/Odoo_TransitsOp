@@ -86,7 +86,13 @@ export function CreateTripCard({ vehicles, drivers, onDispatch }: CreateTripCard
               <RuleHintBanner text={errorMsg} type="error" />
             )}
             
-            {selectedVehicle && (
+            {selectedVehicle && isOverCapacity && cargoWeight ? (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-sm mb-4">
+                <div className="text-zinc-200">Vehicle Capacity: <span className="font-mono">{selectedVehicle.capacityKg.toLocaleString()}</span> kg</div>
+                <div className="text-zinc-200">Cargo Weight: <span className="font-mono">{cargoWeight.toLocaleString()}</span> kg</div>
+                <div className="text-red-500 font-semibold mt-1">✗ Capacity exceeded by {(cargoWeight - selectedVehicle.capacityKg).toLocaleString()} kg — dispatch blocked</div>
+              </div>
+            ) : selectedVehicle ? (
               <div className="p-3 bg-zinc-900 border border-zinc-800 rounded-lg text-sm mb-4">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-zinc-400">Vehicle Capacity:</span>
@@ -94,17 +100,12 @@ export function CreateTripCard({ vehicles, drivers, onDispatch }: CreateTripCard
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-zinc-400">Remaining Capacity:</span>
-                  <span className={`font-mono ${isOverCapacity ? 'text-red-500 font-bold' : 'text-green-500'}`}>
+                  <span className="font-mono text-green-500">
                     {(selectedVehicle.capacityKg - (cargoWeight || 0)).toLocaleString()} kg
                   </span>
                 </div>
-                {isOverCapacity && (
-                  <div className="mt-2 pt-2 border-t border-red-500/20 text-red-500 text-xs font-semibold">
-                    Rule: Cargo weight exceeds vehicle capacity (BR-1). Dispatch blocked.
-                  </div>
-                )}
               </div>
-            )}
+            ) : null}
 
             <div className="grid grid-cols-2 gap-4">
               <FormField

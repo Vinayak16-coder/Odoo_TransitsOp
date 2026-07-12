@@ -131,7 +131,7 @@ export default function LoginForm() {
       {process.env.NODE_ENV !== 'production' && (
         <div className="pt-6 mt-6 border-t border-zinc-800">
           <p className="text-xs text-zinc-500 mb-2 uppercase tracking-wider font-semibold">Dev Mode: Auto-fill Role</p>
-          <Select onValueChange={handleDevFill}>
+          <Select onValueChange={(val) => handleDevFill(val as string)}>
             <SelectTrigger className="bg-zinc-900 border-zinc-800 text-zinc-400">
               <SelectValue placeholder="Select a role to test..." />
             </SelectTrigger>

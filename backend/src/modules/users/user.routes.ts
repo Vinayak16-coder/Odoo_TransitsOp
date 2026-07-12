@@ -9,12 +9,11 @@ const router = Router();
 
 router.use(authenticate);
 
-// Settings is accessible ONLY to FLEET_MANAGER
-router.get('/', authorize(['FLEET_MANAGER']), UserController.getAll);
-router.post('/', authorize(['FLEET_MANAGER']), validate(createUserSchema), UserController.create);
-router.put('/:id', authorize(['FLEET_MANAGER']), validate(updateUserSchema), UserController.update);
-router.delete('/:id', authorize(['FLEET_MANAGER']), UserController.delete);
+router.get('/', authorize('Settings'), UserController.getAll);
+router.post('/', authorize('Settings'), validate(createUserSchema), UserController.create);
+router.put('/:id', authorize('Settings'), validate(updateUserSchema), UserController.update);
+router.delete('/:id', authorize('Settings'), UserController.delete);
 
-router.get('/permissions-matrix', authorize(['FLEET_MANAGER']), UserController.getPermissionsMatrix);
+router.get('/permissions-matrix', authorize('Settings'), UserController.getPermissionsMatrix);
 
 export default router;

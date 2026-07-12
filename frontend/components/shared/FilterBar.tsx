@@ -14,7 +14,7 @@ export function FilterBar({ filters }: { filters: FilterConfig[] }) {
       {filters.map(filter => (
         <div key={filter.key} className="flex items-center gap-2">
           <span className="text-sm font-medium text-zinc-400">{filter.label}</span>
-          <Select value={filter.value} onValueChange={filter.onChange}>
+          <Select value={filter.value} onValueChange={(val) => filter.onChange(val as string)}>
             <SelectTrigger className="w-[180px] bg-zinc-950 border-zinc-800">
               <SelectValue placeholder={`Select ${filter.label}`} />
             </SelectTrigger>

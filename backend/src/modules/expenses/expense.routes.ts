@@ -9,14 +9,11 @@ const router = Router();
 
 router.use(authenticate);
 
-// Reads: FLEET_MANAGER, FINANCIAL_ANALYST
-router.get('/', authorize(['FLEET_MANAGER', 'FINANCIAL_ANALYST']), ExpenseController.getAll);
+router.get('/', authorize('FuelAndExpenses'), ExpenseController.getAll);
 
-// Writes: FLEET_MANAGER, FINANCIAL_ANALYST
-const writeRoles = ['FLEET_MANAGER', 'FINANCIAL_ANALYST'];
-
-router.post('/', authorize(writeRoles), validate(createExpenseSchema), ExpenseController.create);
-router.put('/:id', authorize(writeRoles), validate(updateExpenseSchema), ExpenseController.update);
-router.delete('/:id', authorize(['FINANCIAL_ANALYST']), ExpenseController.delete);
+// Writes
+router.post('/', authorize('FuelAndExpenses'), validate(createExpenseSchema), ExpenseController.create);
+router.put('/:id', authorize('FuelAndExpenses'), validate(updateExpenseSchema), ExpenseController.update);
+router.delete('/:id', authorize('FuelAndExpenses'), ExpenseController.delete);
 
 export default router;

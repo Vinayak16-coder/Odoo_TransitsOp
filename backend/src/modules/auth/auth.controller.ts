@@ -78,6 +78,13 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       expires: expiresAt,
     });
 
+    res.cookie('role', user.role, {
+      httpOnly: false,
+      secure: !isDev,
+      sameSite: 'lax',
+      expires: expiresAt,
+    });
+
     res.json({
       success: true,
       data: {
@@ -146,6 +153,13 @@ export const refresh = async (req: Request, res: Response, next: NextFunction) =
       expires: newExpiresAt,
     });
 
+    res.cookie('role', tokenRecord.user.role, {
+      httpOnly: false,
+      secure: !isDev,
+      sameSite: 'lax',
+      expires: newExpiresAt,
+    });
+
     res.json({
       success: true,
       data: {
@@ -167,6 +181,7 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
     }
 
     res.clearCookie('refreshToken');
+    res.clearCookie('role');
     res.json({ success: true });
   } catch (error) {
     next(error);

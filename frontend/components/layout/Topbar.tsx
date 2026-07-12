@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api';
 
 export function Topbar() {
-  const { user, setAuth } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -19,7 +19,7 @@ export function Topbar() {
     } catch (e) {
       // ignore
     } finally {
-      setAuth(null, null);
+      logout();
       router.push('/login');
     }
   };
@@ -45,7 +45,7 @@ export function Topbar() {
         </div>
         
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger className="outline-none">
             <Avatar className="h-9 w-9 cursor-pointer border border-zinc-800 hover:border-zinc-700 transition-colors">
               <AvatarFallback className="bg-amber-500/10 text-amber-500 text-sm font-medium">
                 {user.name.substring(0, 2).toUpperCase()}

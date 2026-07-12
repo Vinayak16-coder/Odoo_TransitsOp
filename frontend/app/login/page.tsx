@@ -5,13 +5,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col md:flex-row">
       {/* Left Panel - Branding & Info */}
-      <div className="md:w-1/2 p-10 flex flex-col justify-between bg-zinc-900/50 border-r border-zinc-800">
+      <div className="md:w-5/12 p-10 flex flex-col justify-between bg-zinc-900/50 border-r border-zinc-800">
         <div>
-          <div className="flex items-center gap-2 mb-16">
-            <div className="w-8 h-8 rounded bg-amber-500 flex items-center justify-center">
-              <Truck className="w-5 h-5 text-zinc-950" />
+          <div className="flex items-center gap-3 mb-16">
+            <div className="w-10 h-10 rounded bg-amber-500 flex items-center justify-center shrink-0">
+              <Truck className="w-6 h-6 text-zinc-950" />
             </div>
-            <h1 className="text-2xl font-bold text-zinc-50 tracking-tight">TransitOps</h1>
+            <h1 className="text-3xl font-bold text-zinc-50 tracking-tight">TransitOps</h1>
           </div>
           
           <div className="space-y-6 max-w-md">
@@ -59,8 +59,8 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="md:w-1/2 flex items-center justify-center p-6 bg-zinc-950">
-        <div className="w-full max-w-md">
+      <div className="md:w-7/12 flex flex-col items-center justify-center p-6 bg-zinc-950">
+        <div className="w-full max-w-md mx-auto">
           <LoginForm />
         </div>
       </div>

@@ -84,11 +84,9 @@ export function DriverTable({ drivers, onEdit, onChangeStatus, onSuspend }: Driv
         return (
           <RoleGate allow={['FLEET_MANAGER', 'SAFETY_OFFICER']}>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 text-zinc-400 hover:text-zinc-100">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
+              <DropdownMenuTrigger className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50 outline-none transition-colors">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-zinc-950 border-zinc-800 text-zinc-200">
                 <DropdownMenuItem onClick={() => onEdit(row.original)} className="cursor-pointer focus:bg-zinc-900">

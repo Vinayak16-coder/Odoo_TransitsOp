@@ -7,7 +7,7 @@ import { PermissionsGrid } from './components/PermissionsGrid';
 
 export default function SettingsPage() {
   return (
-    <RoleGate allowedRoles={['FLEET_MANAGER']}>
+    <RoleGate allow={['FLEET_MANAGER']}>
       <div className="flex flex-col gap-8 p-8 max-w-7xl mx-auto w-full">
         <div>
           <h1 className="text-3xl font-bold tracking-tight mb-2">System Settings</h1>

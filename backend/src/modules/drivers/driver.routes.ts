@@ -11,13 +11,13 @@ const router = Router();
 router.use(authenticate);
 
 // Reads: FLEET_MANAGER, SAFETY_OFFICER, DRIVER
-router.get('/', authorize(['FLEET_MANAGER', 'SAFETY_OFFICER', 'DRIVER']), DriverController.getAll);
-router.get('/:id', authorize(['FLEET_MANAGER', 'SAFETY_OFFICER', 'DRIVER']), DriverController.getById);
+router.get('/', authorize('Drivers'), DriverController.getAll);
+router.get('/:id', authorize('Drivers'), DriverController.getById);
 
-// Writes: FLEET_MANAGER, SAFETY_OFFICER
-router.post('/', authorize(['FLEET_MANAGER', 'SAFETY_OFFICER']), validate(createDriverSchema), DriverController.create);
-router.put('/:id', authorize(['FLEET_MANAGER', 'SAFETY_OFFICER']), validate(updateDriverSchema), DriverController.update);
-router.patch('/:id/status', authorize(['FLEET_MANAGER', 'SAFETY_OFFICER']), validate(updateDriverStatusSchema), DriverController.updateStatus);
-router.delete('/:id', authorize(['FLEET_MANAGER', 'SAFETY_OFFICER']), DriverController.delete);
+// Writes
+router.post('/', authorize('Drivers'), validate(createDriverSchema), DriverController.create);
+router.put('/:id', authorize('Drivers'), validate(updateDriverSchema), DriverController.update);
+router.patch('/:id/status', authorize('Drivers'), validate(updateDriverStatusSchema), DriverController.updateStatus);
+router.delete('/:id', authorize('Drivers'), DriverController.delete);
 
 export default router;

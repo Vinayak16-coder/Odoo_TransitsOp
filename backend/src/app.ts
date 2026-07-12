@@ -12,6 +12,7 @@ import fuelRoutes from './modules/fuel/fuel.routes';
 import expenseRoutes from './modules/expenses/expense.routes';
 import analyticsRoutes from './modules/analytics/analytics.routes';
 import userRoutes from './modules/users/user.routes';
+import permissionRoutes from './modules/permissions/permission.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/fuel', fuelRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/permissions', permissionRoutes);
 
 app.use(errorHandler);
 

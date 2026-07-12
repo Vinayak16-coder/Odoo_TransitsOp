@@ -21,19 +21,24 @@ export default function FuelExpensesPage() {
   const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
 
   const loadData = async () => {
+    setLoading(true);
     try {
-      const [fuelRes, expenseRes, vehiclesRes, tripsRes, kpisRes] = await Promise.all([
+      const results = await Promise.allSettled([
         apiFetch('/fuel'),
         apiFetch('/expenses'),
         apiFetch('/vehicles'),
         apiFetch('/trips'),
         apiFetch('/analytics/kpis'),
       ]);
-      setFuelLogs(fuelRes.data);
-      setExpenses(expenseRes.data);
-      setVehicles(vehiclesRes.data);
-      setTrips(tripsRes.data);
-      setOperationalCost(kpisRes.data?.operationalCost || 0);
+      
+      const [fuelRes, expenseRes, vehiclesRes, tripsRes, kpisRes] = results;
+
+      if (fuelRes.status === 'fulfilled') setFuelLogs(fuelRes.value.data || []);
+      if (expenseRes.status === 'fulfilled') setExpenses(expenseRes.value.data || []);
+      if (vehiclesRes.status === 'fulfilled') setVehicles(vehiclesRes.value.data || []);
+      if (tripsRes.status === 'fulfilled') setTrips(tripsRes.value.data || []);
+      if (kpisRes.status === 'fulfilled') setOperationalCost(kpisRes.value.data?.operationalCost || 0);
+      
     } catch (err) {
       console.error(err);
     } finally {

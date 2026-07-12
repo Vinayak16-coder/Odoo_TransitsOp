@@ -18,12 +18,15 @@ export default function DashboardPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [dashRes, tripsRes] = await Promise.all([
+        const results = await Promise.allSettled([
           apiFetch('/analytics/dashboard'),
           apiFetch('/trips?limit=5')
         ]);
-        setStats(dashRes.data);
-        setTrips(tripsRes.data);
+        
+        const [dashRes, tripsRes] = results;
+        
+        if (dashRes.status === 'fulfilled') setStats(dashRes.value.data);
+        if (tripsRes.status === 'fulfilled') setTrips(tripsRes.value.data || []);
       } catch (err) {
         console.error(err);
       } finally {

@@ -11,6 +11,6 @@ router.post('/login', validate(loginSchema), login);
 router.post('/refresh', refresh);
 router.post('/logout', authenticate, logout);
 router.get('/me', authenticate, getMe);
-router.post('/register', authenticate, authorize(['FLEET_MANAGER']), validate(registerSchema), register);
+router.post('/register', authenticate, authorize('Settings'), validate(registerSchema), register);
 
 export default router;

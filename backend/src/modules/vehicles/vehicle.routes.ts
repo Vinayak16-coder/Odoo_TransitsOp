@@ -10,14 +10,13 @@ const router = Router();
 // Protect all routes
 router.use(authenticate);
 
-// Reads: FLEET_MANAGER, DRIVER
-router.get('/', authorize(['FLEET_MANAGER', 'DRIVER']), VehicleController.getAll);
-router.get('/:id', authorize(['FLEET_MANAGER', 'DRIVER']), VehicleController.getById);
+router.get('/', authorize('Fleet'), VehicleController.getAll);
+router.get('/:id', authorize('Fleet'), VehicleController.getById);
 
-// Writes: FLEET_MANAGER only
-router.post('/', authorize(['FLEET_MANAGER']), validate(createVehicleSchema), VehicleController.create);
-router.put('/:id', authorize(['FLEET_MANAGER']), validate(updateVehicleSchema), VehicleController.update);
-router.patch('/:id/status', authorize(['FLEET_MANAGER']), validate(updateVehicleStatusSchema), VehicleController.updateStatus);
-router.delete('/:id', authorize(['FLEET_MANAGER']), VehicleController.delete);
+// Writes
+router.post('/', authorize('Fleet'), validate(createVehicleSchema), VehicleController.create);
+router.put('/:id', authorize('Fleet'), validate(updateVehicleSchema), VehicleController.update);
+router.patch('/:id/status', authorize('Fleet'), validate(updateVehicleStatusSchema), VehicleController.updateStatus);
+router.delete('/:id', authorize('Fleet'), VehicleController.delete);
 
 export default router;

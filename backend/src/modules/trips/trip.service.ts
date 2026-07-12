@@ -42,7 +42,8 @@ export class TripService {
     if (trip.cargoWeightKg > vehicle.capacityKg) {
       throw { 
         status: 422, 
-        message: `Vehicle Capacity ${vehicle.capacityKg} kg, Cargo Weight ${trip.cargoWeightKg} kg \u2014 Capacity exceeded by ${trip.cargoWeightKg - vehicle.capacityKg} kg \u2014 dispatch blocked.` 
+        message: 'Capacity exceeded',
+        details: { capacityKg: vehicle.capacityKg, cargoWeightKg: trip.cargoWeightKg, exceededByKg: trip.cargoWeightKg - vehicle.capacityKg }
       };
     }
     
@@ -69,7 +70,11 @@ export class TripService {
 
       // Re-verify BR-1 & BR-2 & BR-4
       if (trip.cargoWeightKg > vehicle.capacityKg) {
-        throw { status: 422, message: `Vehicle Capacity ${vehicle.capacityKg} kg, Cargo Weight ${trip.cargoWeightKg} kg \u2014 Capacity exceeded by ${trip.cargoWeightKg - vehicle.capacityKg} kg \u2014 dispatch blocked.` };
+        throw { 
+          status: 422, 
+          message: 'Capacity exceeded',
+          details: { capacityKg: vehicle.capacityKg, cargoWeightKg: trip.cargoWeightKg, exceededByKg: trip.cargoWeightKg - vehicle.capacityKg }
+        };
       }
       if (vehicle.status !== VehicleStatus.AVAILABLE) throw { status: 409, message: 'Vehicle is not available' };
       if (driver.status !== DriverStatus.AVAILABLE) throw { status: 409, message: 'Driver is not available' };

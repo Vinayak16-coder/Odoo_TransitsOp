@@ -12,9 +12,9 @@ async function main() {
   
   const fleetManager = await prisma.user.upsert({
     where: { email: 'fleet@transitops.com' },
-    update: {},
+    update: { name: 'Aarav Sharma' },
     create: {
-      name: 'Alice Fleet',
+      name: 'Aarav Sharma',
       email: 'fleet@transitops.com',
       passwordHash,
       role: Role.FLEET_MANAGER,
@@ -23,9 +23,9 @@ async function main() {
 
   const dispatcher = await prisma.user.upsert({
     where: { email: 'driver@transitops.com' },
-    update: {},
+    update: { name: 'Rohan Patel' },
     create: {
-      name: 'Bob Dispatch',
+      name: 'Rohan Patel',
       email: 'driver@transitops.com',
       passwordHash,
       role: Role.DRIVER,
@@ -34,9 +34,9 @@ async function main() {
 
   const safetyOfficer = await prisma.user.upsert({
     where: { email: 'safety@transitops.com' },
-    update: {},
+    update: { name: 'Priya Mehta' },
     create: {
-      name: 'Carol Safety',
+      name: 'Priya Mehta',
       email: 'safety@transitops.com',
       passwordHash,
       role: Role.SAFETY_OFFICER,
@@ -45,9 +45,9 @@ async function main() {
 
   const financialAnalyst = await prisma.user.upsert({
     where: { email: 'finance@transitops.com' },
-    update: {},
+    update: { name: 'Nisha Desai' },
     create: {
-      name: 'Dave Finance',
+      name: 'Nisha Desai',
       email: 'finance@transitops.com',
       passwordHash,
       role: Role.FINANCIAL_ANALYST,
@@ -58,12 +58,12 @@ async function main() {
 
   // 2. Vehicles
   const vehiclesData = [
-    { regNo: 'V-1001', nameModel: 'Ford Transit', type: VehicleType.VAN, capacityKg: 1500, acquisitionCost: 35000, odometerKm: 12000, status: VehicleStatus.AVAILABLE },
-    { regNo: 'V-1002', nameModel: 'Mercedes Sprinter', type: VehicleType.VAN, capacityKg: 1800, acquisitionCost: 42000, odometerKm: 45000, status: VehicleStatus.AVAILABLE },
-    { regNo: 'V-1003', nameModel: 'Volvo FH16', type: VehicleType.TRUCK, capacityKg: 25000, acquisitionCost: 150000, odometerKm: 125000, status: VehicleStatus.ON_TRIP },
-    { regNo: 'V-1004', nameModel: 'Scania R500', type: VehicleType.TRUCK, capacityKg: 24000, acquisitionCost: 145000, odometerKm: 89000, status: VehicleStatus.IN_SHOP },
-    { regNo: 'V-1005', nameModel: 'Piaggio Ape', type: VehicleType.MINI, capacityKg: 500, acquisitionCost: 8000, odometerKm: 5000, status: VehicleStatus.AVAILABLE },
-    { regNo: 'V-1006', nameModel: 'Renault Kangoo', type: VehicleType.MINI, capacityKg: 650, acquisitionCost: 12000, odometerKm: 95000, status: VehicleStatus.RETIRED },
+    { regNo: 'TOP-GJ-001', nameModel: 'Tata Ace Gold', type: VehicleType.MINI, capacityKg: 710, acquisitionCost: 550000, odometerKm: 12000, status: VehicleStatus.AVAILABLE },
+    { regNo: 'TOP-GJ-002', nameModel: 'Mahindra Bolero Pickup', type: VehicleType.MINI, capacityKg: 1300, acquisitionCost: 850000, odometerKm: 45000, status: VehicleStatus.AVAILABLE },
+    { regNo: 'TOP-GJ-003', nameModel: 'BharatBenz 1217R', type: VehicleType.TRUCK, capacityKg: 12000, acquisitionCost: 2200000, odometerKm: 125000, status: VehicleStatus.ON_TRIP },
+    { regNo: 'TOP-GJ-004', nameModel: 'Eicher Pro 2049', type: VehicleType.TRUCK, capacityKg: 4900, acquisitionCost: 1200000, odometerKm: 89000, status: VehicleStatus.IN_SHOP },
+    { regNo: 'TOP-GJ-005', nameModel: 'Ashok Leyland Dost+', type: VehicleType.MINI, capacityKg: 1500, acquisitionCost: 750000, odometerKm: 5000, status: VehicleStatus.AVAILABLE },
+    { regNo: 'TOP-GJ-006', nameModel: 'Tata Ultra T7', type: VehicleType.TRUCK, capacityKg: 7000, acquisitionCost: 1600000, odometerKm: 95000, status: VehicleStatus.RETIRED },
   ];
 
   const vehicles = [];
@@ -85,11 +85,11 @@ async function main() {
   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
   const driversData = [
-    { name: 'John Doe', licenseNo: 'DL-1001', licenseCategory: LicenseCategory.LMV, licenseExpiry: oneYearFromNow, contact: '555-0101', status: DriverStatus.AVAILABLE },
-    { name: 'Jane Smith', licenseNo: 'DL-1002', licenseCategory: LicenseCategory.HMV, licenseExpiry: oneYearFromNow, contact: '555-0102', status: DriverStatus.AVAILABLE },
-    { name: 'Sam Wilson', licenseNo: 'DL-1003', licenseCategory: LicenseCategory.HMV, licenseExpiry: oneYearFromNow, contact: '555-0103', status: DriverStatus.ON_TRIP },
-    { name: 'Expired Driver', licenseNo: 'DL-1004', licenseCategory: LicenseCategory.LMV, licenseExpiry: oneMonthAgo, contact: '555-0104', status: DriverStatus.SUSPENDED },
-    { name: 'Off Duty Driver', licenseNo: 'DL-1005', licenseCategory: LicenseCategory.LMV, licenseExpiry: oneYearFromNow, contact: '555-0105', status: DriverStatus.OFF_DUTY },
+    { name: 'Rahul Patel', licenseNo: 'DL-1001', licenseCategory: LicenseCategory.LMV, licenseExpiry: oneYearFromNow, contact: '9876543210', status: DriverStatus.AVAILABLE },
+    { name: 'Karan Joshi', licenseNo: 'DL-1002', licenseCategory: LicenseCategory.HMV, licenseExpiry: oneYearFromNow, contact: '9876543211', status: DriverStatus.AVAILABLE },
+    { name: 'Vivek Shah', licenseNo: 'DL-1003', licenseCategory: LicenseCategory.HMV, licenseExpiry: oneYearFromNow, contact: '9876543212', status: DriverStatus.ON_TRIP },
+    { name: 'Amit Solanki', licenseNo: 'DL-1004', licenseCategory: LicenseCategory.LMV, licenseExpiry: oneMonthAgo, contact: '9876543213', status: DriverStatus.SUSPENDED },
+    { name: 'Hardik Parmar', licenseNo: 'DL-1005', licenseCategory: LicenseCategory.LMV, licenseExpiry: oneYearFromNow, contact: '9876543214', status: DriverStatus.OFF_DUTY },
   ];
 
   const drivers = [];
@@ -107,22 +107,22 @@ async function main() {
   // 4. Trips
   const tripsData = [
     { 
-      tripCode: 'TR-1001', source: 'Warehouse A', destination: 'Store 1', vehicleId: vehicles[0].id, driverId: drivers[0].id, cargoWeightKg: 1000, plannedDistanceKm: 150, status: TripStatus.COMPLETED,
-      revenue: 500, finalOdometerKm: vehicles[0].odometerKm + 150, fuelConsumedLiters: 15, dispatchedAt: new Date(Date.now() - 86400000), completedAt: new Date()
+      tripCode: 'TOP-24001', source: 'Ahmedabad Logistics Hub', destination: 'Surat Distribution Center', vehicleId: vehicles[0].id, driverId: drivers[0].id, cargoWeightKg: 500, plannedDistanceKm: 260, status: TripStatus.COMPLETED,
+      revenue: 8500, finalOdometerKm: vehicles[0].odometerKm + 260, fuelConsumedLiters: 18, dispatchedAt: new Date(Date.now() - 86400000), completedAt: new Date()
     },
     { 
-      tripCode: 'TR-1002', source: 'Warehouse B', destination: 'Store 2', vehicleId: vehicles[1].id, driverId: drivers[1].id, cargoWeightKg: 1200, plannedDistanceKm: 300, status: TripStatus.COMPLETED,
-      revenue: 900, finalOdometerKm: vehicles[1].odometerKm + 300, fuelConsumedLiters: 35, dispatchedAt: new Date(Date.now() - 172800000), completedAt: new Date(Date.now() - 86400000)
+      tripCode: 'TOP-24002', source: 'Vadodara Depot', destination: 'Rajkot Warehouse', vehicleId: vehicles[1].id, driverId: drivers[1].id, cargoWeightKg: 1100, plannedDistanceKm: 290, status: TripStatus.COMPLETED,
+      revenue: 12000, finalOdometerKm: vehicles[1].odometerKm + 290, fuelConsumedLiters: 25, dispatchedAt: new Date(Date.now() - 172800000), completedAt: new Date(Date.now() - 86400000)
     },
     { 
-      tripCode: 'TR-1003', source: 'Warehouse A', destination: 'City Center', vehicleId: vehicles[2].id, driverId: drivers[2].id, cargoWeightKg: 18000, plannedDistanceKm: 850, status: TripStatus.DISPATCHED,
+      tripCode: 'TOP-24003', source: 'Ahmedabad Logistics Hub', destination: 'Vapi Industrial Estate', vehicleId: vehicles[2].id, driverId: drivers[2].id, cargoWeightKg: 10500, plannedDistanceKm: 350, status: TripStatus.DISPATCHED,
       dispatchedAt: new Date()
     },
     { 
-      tripCode: 'TR-1004', source: 'Supplier X', destination: 'Warehouse A', cargoWeightKg: 500, plannedDistanceKm: 50, status: TripStatus.DRAFT 
+      tripCode: 'TOP-24004', source: 'Bhavnagar Port', destination: 'Gandhinagar Warehouse', cargoWeightKg: 400, plannedDistanceKm: 180, status: TripStatus.DRAFT 
     },
     { 
-      tripCode: 'TR-1005', source: 'Warehouse C', destination: 'Store 3', vehicleId: vehicles[0].id, driverId: drivers[0].id, cargoWeightKg: 1000, plannedDistanceKm: 200, status: TripStatus.CANCELLED, cancelReason: 'Weather condition'
+      tripCode: 'TOP-24005', source: 'Anand Distribution Center', destination: 'Surat Distribution Center', vehicleId: vehicles[0].id, driverId: drivers[0].id, cargoWeightKg: 650, plannedDistanceKm: 130, status: TripStatus.CANCELLED, cancelReason: 'Vehicle Breakdown'
     },
   ];
 
@@ -142,8 +142,8 @@ async function main() {
   await prisma.maintenanceLog.create({
     data: {
       vehicleId: vehicles[3].id,
-      serviceType: 'Engine Repair',
-      cost: 1500,
+      serviceType: 'Engine Inspection',
+      cost: 15000,
       serviceDate: new Date(),
       status: MaintenanceStatus.IN_SHOP,
       notes: 'Knocking sound from engine'
@@ -153,8 +153,8 @@ async function main() {
   await prisma.maintenanceLog.create({
     data: {
       vehicleId: vehicles[1].id,
-      serviceType: 'Oil Change',
-      cost: 150,
+      serviceType: 'Preventive Service',
+      cost: 4500,
       serviceDate: new Date(Date.now() - 2592000000),
       status: MaintenanceStatus.COMPLETED
     }
@@ -169,8 +169,8 @@ async function main() {
       vehicleId: vehicles[0].id,
       tripId: trips[0].id,
       date: trips[0].completedAt as Date,
-      liters: 15,
-      cost: 22.50
+      liters: 18,
+      cost: 1650
     }
   });
 
@@ -179,8 +179,8 @@ async function main() {
       vehicleId: vehicles[1].id,
       tripId: trips[1].id,
       date: trips[1].completedAt as Date,
-      liters: 35,
-      cost: 52.50
+      liters: 25,
+      cost: 2300
     }
   });
 
@@ -192,9 +192,9 @@ async function main() {
       tripId: trips[0].id,
       vehicleId: vehicles[0].id,
       category: ExpenseCategory.TOLL,
-      toll: 15,
+      toll: 350,
       other: 0,
-      total: 15,
+      total: 350,
     }
   });
 
@@ -204,12 +204,41 @@ async function main() {
       vehicleId: vehicles[1].id,
       category: ExpenseCategory.MISC,
       toll: 0,
-      other: 50,
-      total: 50,
+      other: 1200,
+      total: 1200,
     }
   });
 
-  console.log('Expenses seeded. Database setup complete!');
+  console.log('Expenses seeded.');
+
+  // 8. Role Permissions
+  const modules = ['Dashboard', 'Fleet', 'Drivers', 'Trips', 'Maintenance', 'FuelAndExpenses', 'Analytics', 'Settings'];
+  const roles = [Role.FLEET_MANAGER, Role.DRIVER, Role.SAFETY_OFFICER, Role.FINANCIAL_ANALYST];
+  
+  for (const role of roles) {
+    for (const mod of modules) {
+      let access = 'NONE';
+      if (role === Role.FLEET_MANAGER) {
+        access = 'FULL';
+      } else if (role === Role.DRIVER) {
+        if (['Dashboard', 'Fleet', 'Drivers', 'Trips'].includes(mod)) access = 'VIEW';
+      } else if (role === Role.SAFETY_OFFICER) {
+        if (['Dashboard', 'Drivers', 'Maintenance', 'Analytics'].includes(mod)) access = 'VIEW';
+      } else if (role === Role.FINANCIAL_ANALYST) {
+        if (['FuelAndExpenses', 'Analytics'].includes(mod)) access = 'VIEW';
+      }
+
+      await prisma.rolePermission.upsert({
+        where: {
+          role_module: { role, module: mod }
+        },
+        update: {},
+        create: { role, module: mod, access: access as any }
+      });
+    }
+  }
+  
+  console.log('RolePermissions seeded. Database setup complete!');
 }
 
 main()

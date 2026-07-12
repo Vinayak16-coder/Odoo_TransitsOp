@@ -51,24 +51,30 @@ describe('Trip Lifecycle Integration Test (BR-6)', () => {
     expect(createRes.status).toBe(201);
     
     // 2. Dispatch Trip
-    prismaMock.trip.findUnique.mockResolvedValue({ id: 't1', status: 'DRAFT', vehicleId: 'v1', driverId: 'd1', cargoWeightKg: 500 } as any);
-    prismaMock.vehicle.findUnique.mockResolvedValue({ id: 'v1', capacityKg: 1000, status: 'AVAILABLE' } as any);
-    prismaMock.driver.findUnique.mockResolvedValue({ id: 'd1', status: 'AVAILABLE' } as any);
+    prismaMock.trip.findUnique.mockResolvedValue({ 
+      id: 't1', status: 'DRAFT', vehicleId: 'v1', driverId: 'd1', cargoWeightKg: 500,
+      vehicle: { id: 'v1', capacityKg: 1000, status: 'AVAILABLE', odometerKm: 1000 },
+      driver: { id: 'd1', status: 'AVAILABLE', licenseExpiry: new Date(Date.now() + 100000) }
+    } as any);
     prismaMock.$transaction.mockResolvedValue([ { id: 't1', status: 'DISPATCHED' } ] as any);
     
     const dispatchRes = await request(app)
-      .put('/api/trips/t1/status')
+      .patch('/api/trips/t1/dispatch')
       .set('Authorization', `Bearer ${token}`)
-      .send({ status: 'DISPATCHED' });
+      .send({});
       
     expect(dispatchRes.status).toBe(200);
 
     // 3. Complete Trip
-    prismaMock.trip.findUnique.mockResolvedValue({ id: 't1', status: 'DISPATCHED', vehicleId: 'v1', driverId: 'd1' } as any);
+    prismaMock.trip.findUnique.mockResolvedValue({ 
+      id: 't1', status: 'DISPATCHED', vehicleId: 'v1', driverId: 'd1',
+      vehicle: { id: 'v1', capacityKg: 1000, status: 'ON_TRIP', odometerKm: 1000 },
+      driver: { id: 'd1', status: 'ON_TRIP', licenseExpiry: new Date(Date.now() + 100000) }
+    } as any);
     prismaMock.$transaction.mockResolvedValue([ { id: 't1', status: 'COMPLETED' } ] as any);
     
     const completeRes = await request(app)
-      .post('/api/trips/t1/complete')
+      .patch('/api/trips/t1/complete')
       .set('Authorization', `Bearer ${token}`)
       .send({ finalOdometerKm: 1500, fuelConsumedLiters: 50, fuelCost: 100 });
       

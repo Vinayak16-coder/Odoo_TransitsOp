@@ -13,9 +13,9 @@ import { RuleHintBanner } from '@/components/shared/RuleHintBanner';
 const driverSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   licenseNo: z.string().min(1, 'License number is required'),
-  licenseCategory: z.enum(['A', 'B', 'C', 'C1', 'CE']),
+  licenseCategory: z.enum(['LMV', 'HMV']),
   licenseExpiry: z.string().min(1, 'License expiry date is required'),
-  contact: z.string().min(1, 'Contact is required'),
+  contact: z.string().regex(/^\d{10}$/, 'Mobile phone must be exactly 10 digits'),
 });
 
 type DriverFormValues = z.infer<typeof driverSchema>;
@@ -41,7 +41,7 @@ export function DriverForm({ initialData, onSubmit, onCancel }: DriverFormProps)
     defaultValues: {
       name: initialData?.name || '',
       licenseNo: initialData?.licenseNo || '',
-      licenseCategory: initialData?.licenseCategory || 'C',
+      licenseCategory: initialData?.licenseCategory || 'LMV',
       licenseExpiry: defaultExpiry,
       contact: initialData?.contact || '',
     },
@@ -94,7 +94,7 @@ export function DriverForm({ initialData, onSubmit, onCancel }: DriverFormProps)
               <FormItem>
                 <FormLabel>Contact Info</FormLabel>
                 <FormControl>
-                  <Input placeholder="+1 234 567 890" {...field} className="bg-zinc-950 border-zinc-800" />
+                  <Input placeholder="1234567890" {...field} className="bg-zinc-950 border-zinc-800" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -128,11 +128,8 @@ export function DriverForm({ initialData, onSubmit, onCancel }: DriverFormProps)
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="A">Class A</SelectItem>
-                    <SelectItem value="B">Class B</SelectItem>
-                    <SelectItem value="C">Class C</SelectItem>
-                    <SelectItem value="C1">Class C1</SelectItem>
-                    <SelectItem value="CE">Class CE</SelectItem>
+                    <SelectItem value="LMV">LMV</SelectItem>
+                    <SelectItem value="HMV">HMV</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
